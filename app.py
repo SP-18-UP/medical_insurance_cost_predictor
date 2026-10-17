@@ -20,9 +20,11 @@ st.write(
 )
 
 st.divider()
+
+# Patient details
 st.subheader("Enter Patient Details")
 
-# Age input - no maximum limit
+# Age input
 age = st.number_input(
     "Age (years)",
     min_value=0,
@@ -33,7 +35,7 @@ age = st.number_input(
 
 st.caption("Suggested range: 0–100 years")
 
-# BMI input - no maximum limit
+# BMI input
 bmi = st.number_input(
     "BMI",
     min_value=0.0,
@@ -46,32 +48,45 @@ st.caption("Suggested range: 0.0–100.0")
 
 st.divider()
 
-# Prediction
-if st.button("Predict Insurance Cost", use_container_width=True):
+# Prediction button
+if st.button(
+    "Predict Insurance Cost",
+    use_container_width=True
+):
 
+    # Prepare input data
     input_data = pd.DataFrame({
         "age": [age],
         "bmi": [bmi]
     })
 
     try:
+        # Predict insurance charges
         prediction = model.predict(input_data)[0]
 
+        # Convert USD to INR
+        usd_to_inr = 94.96
+        prediction_inr = prediction * usd_to_inr
+
+        # Display prediction
         st.success("Prediction completed!")
 
         st.metric(
             label="Predicted Insurance Charges",
-            value=f"${prediction:,.2f}"
+            value=f"₹{prediction_inr:,.2f}"
         )
 
         st.caption(
-            "This is an estimated prediction, not an actual insurance quote."
+            "Estimated amount in Indian Rupees. "
+            "Conversion uses ₹94.96 per USD."
         )
 
     except Exception as e:
         st.error(f"Prediction error: {e}")
 
+# Footer
 st.divider()
+
 st.caption(
     "Machine Learning Project | Multiple Linear Regression"
 )
